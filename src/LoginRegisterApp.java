@@ -5,11 +5,12 @@ import java.awt.event.ActionListener;
 import java.sql.*;
 
 public class LoginRegisterApp extends JFrame {
-    
+    // Database credentials
     static final String DB_URL = "jdbc:mysql://localhost:3306/car_rental_system";
     static final String USER = "root";
     static final String PASS = "password";
 
+    // GUI components
     private JTextField usernameField;
     private JPasswordField passwordField;
     private JButton loginButton, registerButton;
@@ -20,7 +21,8 @@ public class LoginRegisterApp extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
-        JLabel titleLabel = new JLabel("Login/Register", JLabel.CENTER);
+        // Creating UI elements
+        JLabel titleLabel = new JLabel("Login", JLabel.CENTER);
         titleLabel.setFont(new Font("Arial", Font.BOLD, 18));
 
         JPanel inputPanel = new JPanel();
@@ -43,9 +45,11 @@ public class LoginRegisterApp extends JFrame {
         buttonPanel.add(loginButton);
         buttonPanel.add(registerButton);
 
+        // Adding action listeners
         loginButton.addActionListener(new LoginHandler());
         registerButton.addActionListener(new RegisterHandler());
 
+        // Add components to the frame
         add(titleLabel, BorderLayout.NORTH);
         add(inputPanel, BorderLayout.CENTER);
         add(buttonPanel, BorderLayout.SOUTH);
@@ -53,6 +57,7 @@ public class LoginRegisterApp extends JFrame {
         setVisible(true);
     }
 
+    // Action handler for Login
     class LoginHandler implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -70,8 +75,10 @@ public class LoginRegisterApp extends JFrame {
             Connection conn = null;
             PreparedStatement stmt = null;
             try {
+                // Connecting to the database
                 conn = DriverManager.getConnection(DB_URL, USER, PASS);
 
+                // Query to check username and password
                 String sql = "SELECT * FROM users WHERE username = ? AND password = ?";
                 stmt = conn.prepareStatement(sql);
                 stmt.setString(1, username);
@@ -79,6 +86,7 @@ public class LoginRegisterApp extends JFrame {
 
                 ResultSet rs = stmt.executeQuery();
 
+                // If the user exists, return true
                 if (rs.next()) {
                     return true;
                 }
@@ -96,54 +104,23 @@ public class LoginRegisterApp extends JFrame {
         }
     }
 
+    // Action handler for Register
     class RegisterHandler implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            String username = usernameField.getText();
-            String password = new String(passwordField.getPassword());
-
-            if (registerUser(username, password)) {
-                JOptionPane.showMessageDialog(null, "Registration successful!");
-            } else {
-                JOptionPane.showMessageDialog(null, "Registration failed. Username may already exist.", "Error", JOptionPane.ERROR_MESSAGE);
-            }
-        }
-
-        private boolean registerUser(String username, String password) {
-            Connection conn = null;
-            PreparedStatement stmt = null;
-            try {
-                conn = DriverManager.getConnection(DB_URL, USER, PASS);
-
-                String sql = "INSERT INTO users (username, password) VALUES (?, ?)";
-                stmt = conn.prepareStatement(sql);
-                stmt.setString(1, username);
-                stmt.setString(2, password);
-
-                int rowsInserted = stmt.executeUpdate();
-                return rowsInserted > 0;
-            } catch (SQLException se) {
-                se.printStackTrace();
-            } finally {
-                try {
-                    if (stmt != null) stmt.close();
-                    if (conn != null) conn.close();
-                } catch (SQLException se) {
-                    se.printStackTrace();
-                }
-            }
-            return false;
+            new RegistrationForm();
         }
     }
 
     public static void main(String[] args) {
-
+        // Load MySQL JDBC driver
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
 
+        // Create and display the form
         SwingUtilities.invokeLater(() -> new LoginRegisterApp());
     }
 }
