@@ -6,9 +6,9 @@ import java.sql.*;
 
 public class LoginRegisterApp extends JFrame {
     // Database credentials
-    static final String DB_URL = "jdbc:mysql://localhost:3306/car_rental_system";
+    static final String DB_URL = "jdbc:mysql://localhost:3008/car_rental";
     static final String USER = "root";
-    static final String PASS = "password";
+    static final String PASS = "tiger";
 
     // GUI components
     private JTextField usernameField;
