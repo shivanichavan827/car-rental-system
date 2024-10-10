@@ -10,9 +10,9 @@ public class RegistrationForm extends JFrame {
     private JButton registerButton;
 
     // Database credentials
-    static final String DB_URL = "jdbc:mysql://localhost:3306/car_rental_system";
+    static final String DB_URL = "jdbc:mysql://localhost:3306/ebs";
     static final String USER = "root";  
-    static final String PASS = "password";
+    static final String PASS = "tiger";
 
     public RegistrationForm() {
         setTitle("Register New User");
@@ -70,7 +70,7 @@ public class RegistrationForm extends JFrame {
             conn = DriverManager.getConnection(DB_URL, USER, PASS);
 
             // Query to insert a new user
-            String sql = "INSERT INTO users (username, password) VALUES (?, ?)";
+            String sql = "INSERT INTO car_rental (user_name, user_pass) VALUES (?, ?)";
             stmt = conn.prepareStatement(sql);
             stmt.setString(1, username);
             stmt.setString(2, password);

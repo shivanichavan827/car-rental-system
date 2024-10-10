@@ -6,7 +6,7 @@ import java.sql.*;
 
 public class LoginRegisterApp extends JFrame {
     // Database credentials
-    static final String DB_URL = "jdbc:mysql://localhost:3008/car_rental";
+    static final String DB_URL = "jdbc:mysql://localhost:3306/ebs";
     static final String USER = "root";
     static final String PASS = "tiger";
 
@@ -79,12 +79,13 @@ public class LoginRegisterApp extends JFrame {
                 conn = DriverManager.getConnection(DB_URL, USER, PASS);
 
                 // Query to check username and password
-                String sql = "SELECT * FROM users WHERE username = ? AND password = ?";
+                String sql = "SELECT * FROM car_rental WHERE user_name = ? AND user_pass = ?";
                 stmt = conn.prepareStatement(sql);
                 stmt.setString(1, username);
                 stmt.setString(2, password);
 
                 ResultSet rs = stmt.executeQuery();
+                System.out.println("hiii");
 
                 // If the user exists, return true
                 if (rs.next()) {
@@ -103,7 +104,6 @@ public class LoginRegisterApp extends JFrame {
             return false;
         }
     }
-
     // Action handler for Register
     class RegisterHandler implements ActionListener {
         @Override
