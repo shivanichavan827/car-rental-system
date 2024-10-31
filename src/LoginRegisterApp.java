@@ -10,7 +10,7 @@ public class LoginRegisterApp extends JFrame {
     static final String USER = "root";
     static final String PASS = "tiger";
 
-    // GUI components
+    // GUI componentcleas
     private JTextField usernameField;
     private JPasswordField passwordField;
     private JButton loginButton, registerButton;
@@ -66,6 +66,8 @@ public class LoginRegisterApp extends JFrame {
 
             if (validateUser(username, password)) {
                 JOptionPane.showMessageDialog(null, "Login successful!");
+                new HomePage();  // Open the new HomePage window
+                dispose(); // Close the login window
             } else {
                 JOptionPane.showMessageDialog(null, "Invalid username or password", "Error", JOptionPane.ERROR_MESSAGE);
             }
@@ -85,12 +87,9 @@ public class LoginRegisterApp extends JFrame {
                 stmt.setString(2, password);
 
                 ResultSet rs = stmt.executeQuery();
-                System.out.println("hiii");
 
                 // If the user exists, return true
-                if (rs.next()) {
-                    return true;
-                }
+                return rs.next();
             } catch (SQLException se) {
                 se.printStackTrace();
             } finally {
