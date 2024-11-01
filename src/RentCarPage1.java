@@ -1,7 +1,5 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.sql.*;
 
 public class RentCarPage extends JFrame {
@@ -21,6 +19,7 @@ public class RentCarPage extends JFrame {
         JTextArea carDisplayArea = new JTextArea();
         carDisplayArea.setEditable(false);
 
+        // Fetch available cars from the database and display their features
         try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASS);
              Statement stmt = conn.createStatement()) {
 
@@ -32,24 +31,15 @@ public class RentCarPage extends JFrame {
                 String carId = rs.getString("car_id");
                 String brand = rs.getString("brand");
                 String model = rs.getString("model");
-                double pricePerDay = rs.getDouble("price_per_day");
-                String features = rs.getString("features");
+                double pricePerHour = rs.getDouble("price_per_hour");
 
                 sb.append("ID: ").append(carId)
-                        .append(", Brand: ").append(brand)
-                        .append(", Model: ").append(model)
-                        .append(", Price per day: $").append(pricePerDay)
-                        .append(", Features: ").append(features)
-                        .append("\n");
-
-                JButton rentButton = new JButton("Rent " + brand + " " + model);
-                rentButton.addActionListener(new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        new BookingWindow(carId, brand, model, pricePerDay);
-                    }
-                });
-                carDisplayArea.add(rentButton);
+                  .append(", Brand: ").append(brand)
+                  .append(", Model: ").append(model)
+                  .append(", Price per hour: $").append(pricePerHour)
+                  .append("\n");
             }
+
             carDisplayArea.setText(sb.toString());
 
         } catch (SQLException e) {
@@ -60,9 +50,5 @@ public class RentCarPage extends JFrame {
         add(new JScrollPane(carDisplayArea), BorderLayout.CENTER);
 
         setVisible(true);
-    }
-
-    public static void main(String[] args) {
-        new RentCarPage();
     }
 }
