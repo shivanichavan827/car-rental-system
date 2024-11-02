@@ -24,7 +24,7 @@ public class RentCarPage extends JFrame {
         try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASS);
              Statement stmt = conn.createStatement()) {
 
-            String sql = "SELECT * FROM cars WHERE is_available = true";
+            String sql = "SELECT * FROM cars WHERE available = true";
             ResultSet rs = stmt.executeQuery(sql);
 
             StringBuilder sb = new StringBuilder();
@@ -33,14 +33,15 @@ public class RentCarPage extends JFrame {
                 String brand = rs.getString("brand");
                 String model = rs.getString("model");
                 double pricePerDay = rs.getDouble("price_per_day");
-                String features = rs.getString("features");
+                //String features = rs.getString("features");
 
                 sb.append("ID: ").append(carId)
                         .append(", Brand: ").append(brand)
                         .append(", Model: ").append(model)
                         .append(", Price per day: $").append(pricePerDay)
-                        .append(", Features: ").append(features)
+                        //.append(", Features: ").append(features)
                         .append("\n");
+                        System.out.println(sb);
 
                 JButton rentButton = new JButton("Rent " + brand + " " + model);
                 rentButton.addActionListener(new ActionListener() {
