@@ -2,14 +2,20 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import javafx.embed.swing.JFXPanel;
+import javafx.scene.Scene;
+import javafx.scene.control.DatePicker;
+import javafx.scene.layout.VBox;
 
 public class BookingWindow extends JFrame {
     private String carId;
     private String brand;
     private String model;
     private double pricePerDay;
+    private DatePicker datePicker;
 
     public BookingWindow(String carId, String brand, String model, double pricePerDay) {
         this.carId = carId;
@@ -19,25 +25,30 @@ public class BookingWindow extends JFrame {
 
         setTitle("Book Car - " + brand + " " + model);
         setSize(400, 300);
-        setLayout(new GridLayout(4, 1));
+        setLayout(new GridLayout(5, 1));
 
         JLabel dateLabel = new JLabel("Select Date:");
-        JDatePickerImpl datePicker = new JDatePickerImpl(); // Ensure JDatePicker library is added
         add(dateLabel);
-        add(datePicker);
 
-        JLabel timeSlotLabel = new JLabel("Select Time Slot:");
-        String[] timeSlots = {"08:00 - 12:00", "12:00 - 16:00", "16:00 - 20:00", "20:00 - 24:00"};
-        JComboBox<String> timeSlotBox = new JComboBox<>(timeSlots);
-        add(timeSlotLabel);
-        add(timeSlotBox);
+        // Initialize JFXPanel to allow embedding JavaFX components in Swing
+        JFXPanel fxPanel = new JFXPanel();
+        VBox vbox = new VBox();
+        datePicker = new DatePicker();
+        vbox.getChildren().add(datePicker);
+        Scene scene = new Scene(vbox);
+        fxPanel.setScene(scene);
+        add(fxPanel);
+
 
         JButton submitButton = new JButton("Confirm Booking");
         submitButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                Date selectedDate = (Date) datePicker.getModel().getValue();
-                String selectedTimeSlot = (String) timeSlotBox.getSelectedItem();
-                new ConfirmationWindow(carId, selectedDate, selectedTimeSlot, pricePerDay);
+                LocalDate selectedLocalDate = datePicker.getValue();
+                Date selectedDate = selectedLocalDate != null 
+                    ? Date.from(selectedLocalDate.atStartOfDay(ZoneId.systemDefault()).toInstant()) 
+                    : null;
+                
+                new ConfirmationWindow(carId, selectedDate, pricePerDay);
                 dispose();
             }
         });
@@ -45,5 +56,10 @@ public class BookingWindow extends JFrame {
 
         setVisible(true);
     }
-}
 
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            new BookingWindow("1", "Toyota", "Camry", 50.0);
+        });
+    }
+}

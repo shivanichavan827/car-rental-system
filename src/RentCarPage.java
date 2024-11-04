@@ -18,8 +18,8 @@ public class RentCarPage extends JFrame {
         titleLabel.setFont(new Font("Arial", Font.BOLD, 18));
         add(titleLabel, BorderLayout.NORTH);
 
-        JTextArea carDisplayArea = new JTextArea();
-        carDisplayArea.setEditable(false);
+        JPanel carListPanel = new JPanel();
+        carListPanel.setLayout(new BoxLayout(carListPanel, BoxLayout.Y_AXIS));
 
         try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASS);
              Statement stmt = conn.createStatement()) {
@@ -27,39 +27,35 @@ public class RentCarPage extends JFrame {
             String sql = "SELECT * FROM cars WHERE available = true";
             ResultSet rs = stmt.executeQuery(sql);
 
-            StringBuilder sb = new StringBuilder();
             while (rs.next()) {
                 String carId = rs.getString("car_id");
                 String brand = rs.getString("brand");
                 String model = rs.getString("model");
                 double pricePerDay = rs.getDouble("price_per_day");
-                //String features = rs.getString("features");
 
-                sb.append("ID: ").append(carId)
-                        .append(", Brand: ").append(brand)
-                        .append(", Model: ").append(model)
-                        .append(", Price per day: $").append(pricePerDay)
-                        //.append(", Features: ").append(features)
-                        .append("\n");
-                        System.out.println(sb);
+                JPanel carPanel = new JPanel(new BorderLayout());
+                String carInfo = "ID: " + carId + ", Brand: " + brand + ", Model: " + model + ", Price per day: $" + pricePerDay;
+                JLabel carInfoLabel = new JLabel(carInfo);
 
-                JButton rentButton = new JButton("Rent " + brand + " " + model);
-                rentButton.addActionListener(new ActionListener() {
+                JButton bookButton = new JButton("Book the Car");
+                bookButton.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
                         new BookingWindow(carId, brand, model, pricePerDay);
                     }
                 });
-                carDisplayArea.add(rentButton);
+
+                carPanel.add(carInfoLabel, BorderLayout.CENTER);
+                carPanel.add(bookButton, BorderLayout.EAST);
+                carListPanel.add(carPanel);
             }
-            carDisplayArea.setText(sb.toString());
 
         } catch (SQLException e) {
             e.printStackTrace();
-            carDisplayArea.setText("Failed to retrieve car data.");
+            JLabel errorLabel = new JLabel("Failed to retrieve car data.");
+            carListPanel.add(errorLabel);
         }
 
-        add(new JScrollPane(carDisplayArea), BorderLayout.CENTER);
-
+        add(new JScrollPane(carListPanel), BorderLayout.CENTER);
         setVisible(true);
     }
 
