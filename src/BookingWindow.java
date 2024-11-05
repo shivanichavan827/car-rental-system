@@ -44,11 +44,15 @@ public class BookingWindow extends JFrame {
         submitButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 LocalDate selectedLocalDate = datePicker.getValue();
-                Date selectedDate = selectedLocalDate != null 
-                    ? Date.from(selectedLocalDate.atStartOfDay(ZoneId.systemDefault()).toInstant()) 
-                    : null;
+                String s= selectedLocalDate.toString();
+                System.out.println(s);
+                System.out.println("Sameed");
+                System.out.print(selectedLocalDate);
+                System.out.print("selectedLocalDate");
+                selectedLocalDate.getClass().getSimpleName();
+    
                 
-                new ConfirmationWindow(carId, selectedDate, pricePerDay);
+                new ConfirmationWindow(carId, s, pricePerDay);
                 dispose();
             }
         });
@@ -59,7 +63,7 @@ public class BookingWindow extends JFrame {
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            new BookingWindow("1", "Toyota", "Camry", 50.0);
+            new BookingWindow("1", "Toyota", "Camry", 62.0);
         });
     }
 }
