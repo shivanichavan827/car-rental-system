@@ -18,7 +18,6 @@ class Car {
     }
     public String getCarId() {
         return carId;
-        System.out.println("yaznesh");
     }
 
     public String getBrand() {
