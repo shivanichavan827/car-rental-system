@@ -1,9 +1,8 @@
 import java.awt.*;
-import java.text.SimpleDateFormat;
-import javax.swing.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.*;
+import javax.swing.*;
 
 public class ConfirmationWindow extends JFrame {
     static final String DB_URL = "jdbc:mysql://localhost:3306/ebs";
