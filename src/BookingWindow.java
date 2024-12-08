@@ -12,6 +12,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.DatePicker;
 import javafx.scene.layout.VBox;
 import java.sql.*;
+import java.util.List;
 public class BookingWindow extends JFrame {
     static final String DB_URL = "jdbc:mysql://localhost:3306/ebs";
     static final String USER = "root";
@@ -49,18 +50,25 @@ public class BookingWindow extends JFrame {
         JButton submitButton = new JButton("Confirm Booking");
         submitButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                String sql = "SELECT date_added FROM cars WHERE car_id = ?";
+                String sql = "SELECT * FROM cars WHERE car_id = ?";
                 Date rentalDate = null;
+                Car selectCar=null;
                 try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASS);
              //Statement stmt = conn.createStatement()) 
-             
+            
              PreparedStatement stmt = conn.prepareStatement(sql)) 
              {
                 stmt.setString(1, carId);
                 ResultSet rs = stmt.executeQuery();
+                
                 if (rs.next()) {
+                    String brand = rs.getString("brand");
+                    String model = rs.getString("model");
+                    double pricePerDay = rs.getDouble("price_per_day");
                     rentalDate = rs.getDate("date_added"); // Fetch the date value
-                    System.out.println("Rental Date: " + rentalDate);}
+                    System.out.println("Rental Date: " + rentalDate);
+                    selectCar = new Car(carId, brand, model, pricePerDay);
+                }
             //String sql = "SELECT date  FROM cars WHERE car_id = true";
             //stmt.setString(1, carId);
             
@@ -81,7 +89,8 @@ public class BookingWindow extends JFrame {
                 else{
                     System.out.println("added selected date");   
                     RentCarPage rentCarPage = new RentCarPage();
-                    rentCarPage.displayAlternativeCars(rentCarPage.carList, car);
+                    JPanel carListPanel = new JPanel();
+                    //rentCarPage.displayAlternativeCars(rentCarPage.carList, car);
                     try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASS);
              Statement stmt = conn.createStatement()) {
 
@@ -98,27 +107,12 @@ public class BookingWindow extends JFrame {
                 double pricePerDay = rs.getDouble("price_per_day");
 
                 carList.add(new Car(carId, brand, model, pricePerDay));
+                
             }
 
-            for (Car car : carList) {
-                JPanel carPanel = new JPanel(new BorderLayout());
-                String carInfo = "ID: " + car.getCarId() + ", Brand: " + car.getBrand() + ", Model: " + car.getModel() + ", Price per day: $" + car.getPricePerDay();
-                JLabel carInfoLabel = new JLabel(carInfo);
-
-                JButton bookButton = new JButton("Book the Car");
-                bookButton.addActionListener(new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        new BookingWindow(car.getCarId(), car.getBrand(), car.getModel(), car.getPricePerDay());
-
-                        // Display alternative cars
-                        //displayAlternativeCars(carList, car);
-                    }
-                });
-
-                carPanel.add(carInfoLabel, BorderLayout.CENTER);
-                carPanel.add(bookButton, BorderLayout.EAST);
-                carListPanel.add(carPanel);
-            }
+            
+        displayAlternativeCars(carList,selectCar);
+            
 
         } catch (SQLException eee) {
             eee.printStackTrace();
