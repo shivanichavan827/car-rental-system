@@ -11,25 +11,25 @@ public class CarReturnWindow extends JFrame {
     private JButton returnCarButton;
     
     public CarReturnWindow() {
-        System.out.println("LINE 14 ");
+        ////System.out.println("LINE 14 ");
         setTitle("Car Return");
         setSize(400, 300);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new FlowLayout());
-        System.out.println("LINE 19 ");
+        ////System.out.println("LINE 19 ");
         
         // Fetch and display car details
         fetchAndDisplayCarDetails();
-        System.out.println("LINE 23 ");
+        //System.out.println("LINE 23 ");
     }
     
     public void fetchAndDisplayCarDetails() {
-        System.out.println("LINE 27 ");
+        //System.out.println("LINE 27 ");
         // Database connection settings
     
 
         try (Connection connection = DriverManager.getConnection(DB_URL, USER, PASS)) {
-            System.out.println("LINE 32 ");
+            //System.out.println("LINE 32 ");
             // Step 1: Query CustomerCarMapping table to get car_id for user_id = 1
             String query = "SELECT car_id FROM CustomerCarMapping WHERE user_id = 1";
             try (Statement stmt = connection.createStatement();
@@ -70,7 +70,7 @@ public class CarReturnWindow extends JFrame {
                                         JOptionPane.showMessageDialog(null, brand + " " + model + " is returned.");
                                     }
                                 });
-                                System.out.println("LINE 72");
+                                //System.out.println("LINE 72");
                                 // Add the components to the panel
                                 carPanel.add(brandLabel);
                                 carPanel.add(modelLabel);
@@ -81,7 +81,7 @@ public class CarReturnWindow extends JFrame {
 
                                 // Add the car panel to the frame
                                 add(carPanel);
-                                System.out.println("LINE 84");
+                                //System.out.println("LINE 84");
                                 
                             }
                         }
