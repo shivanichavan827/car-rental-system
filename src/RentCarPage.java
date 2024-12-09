@@ -117,11 +117,11 @@ public class RentCarPage extends JFrame {
         alternativesFrame.add(new JScrollPane(alternativesPanel));
         alternativesFrame.setVisible(true);
     }
-
+*/
     public static void main(String[] args) {
         new RentCarPage();
     }
-*/
+
     class Car {
         private String carId;
         private String brand;

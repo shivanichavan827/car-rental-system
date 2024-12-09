@@ -80,8 +80,9 @@ public class BookingWindow extends JFrame {
                 //carListPanel.add(errorLabel);
             }
                 LocalDate selectedLocalDate = datePicker.getValue();
+                
                 String s = selectedLocalDate.toString();
-                String dbdate = rentalDate.toString();
+                String dbdate = rentalDate.toString(); //01-01-2000   ==  24-12-2024
                 if(!s.equals(dbdate)){
                     new ConfirmationWindow(carId, s, pricePerDay);
                 dispose();
@@ -135,47 +136,75 @@ public class BookingWindow extends JFrame {
     }
     
     public void displayAlternativeCars(List<Car> carList, Car selectedCar) {
-        // Sort alternative cars by suitability (e.g., same brand, similar price)
-        carList.sort(Comparator.comparingInt(car -> {
-            int score = 0;
-            if (car.getBrand().equalsIgnoreCase(selectedCar.getBrand())) {
-                score -= 10; // Higher priority for same brand
-            }
-            double priceDifference = Math.abs(car.getPricePerDay() - selectedCar.getPricePerDay());
-            score -= priceDifference; // Lower score for higher price difference
-            return score*(-1);
-        }));
-
-        JFrame alternativesFrame = new JFrame("Alternative Cars");
-        alternativesFrame.setSize(600, 500);
-        JPanel alternativesPanel = new JPanel();
-        alternativesPanel.setLayout(new BoxLayout(alternativesPanel, BoxLayout.Y_AXIS));
-        int count = 0;
-        for (Car car : carList) {
-            if (count >= 5) break;
-            if (!car.getCarId().equals(selectedCar.getCarId())) { // Exclude the selected car
-                JPanel carPanel = new JPanel(new BorderLayout());
-                String carInfo = "ID: " + car.getCarId() + ", Brand: " + car.getBrand() + ", Model: " + car.getModel() + ", Price per day: $" + car.getPricePerDay();
-                JLabel carInfoLabel = new JLabel(carInfo);
-
-                JButton bookButton = new JButton("Book this Car");
-                bookButton.addActionListener(new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        new BookingWindow(car.getCarId(), car.getBrand(), car.getModel(), car.getPricePerDay());
+        // Create a frame to prompt the user
+        JFrame promptFrame = new JFrame("Car Unavailability Notification");
+        promptFrame.setSize(600, 500);
+        promptFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+    
+        JPanel promptPanel = new JPanel();
+        promptPanel.setLayout(new BoxLayout(promptPanel, BoxLayout.Y_AXIS));
+    
+        JLabel promptLabel = new JLabel("The selected car is not available for the date. Please select an alternative car.");
+        promptLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        promptPanel.add(promptLabel);
+    
+        JButton alternativeCarsButton = new JButton("Alternative Cars");
+        alternativeCarsButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        alternativeCarsButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                promptFrame.dispose(); // Close the prompt frame
+    
+                // Display the alternatives panel
+                JFrame alternativesFrame = new JFrame("Alternative Cars");
+                alternativesFrame.setSize(600, 500);
+                JPanel alternativesPanel = new JPanel();
+                alternativesPanel.setLayout(new BoxLayout(alternativesPanel, BoxLayout.Y_AXIS));
+    
+                // Sort alternative cars by suitability (e.g., same brand, similar price)
+                carList.sort(Comparator.comparingInt(car -> {
+                    int score = 0;
+                    if (car.getBrand().equalsIgnoreCase(selectedCar.getBrand())) {
+                        score -= 10; // Higher priority for same brand
                     }
-                });
-
-                carPanel.add(carInfoLabel, BorderLayout.CENTER);
-                carPanel.add(bookButton, BorderLayout.EAST);
-                alternativesPanel.add(carPanel);
-                count++;
+                    double priceDifference = Math.abs(car.getPricePerDay() - selectedCar.getPricePerDay());
+                    score -= priceDifference; // Lower score for higher price difference
+                    return score * (-1);
+                }));
+    
+                int count = 0;
+                for (Car car : carList) {
+                    if (count >= 5) break;
+                    if (!car.getCarId().equals(selectedCar.getCarId())) { // Exclude the selected car
+                        JPanel carPanel = new JPanel(new BorderLayout());
+                        String carInfo = "ID: " + car.getCarId() + ", Brand: " + car.getBrand() + ", Model: " + car.getModel() + ", Price per day: $" + car.getPricePerDay();
+                        JLabel carInfoLabel = new JLabel(carInfo);
+    
+                        JButton bookButton = new JButton("Book this Car");
+                        bookButton.addActionListener(new ActionListener() {
+                            public void actionPerformed(ActionEvent e) {
+                                System.out.println("CODE CONTROL BWJAVA 164");
+                                new BookingWindow(car.getCarId(), car.getBrand(), car.getModel(), car.getPricePerDay());
+                            }
+                        });
+    
+                        carPanel.add(carInfoLabel, BorderLayout.CENTER);
+                        carPanel.add(bookButton, BorderLayout.EAST);
+                        alternativesPanel.add(carPanel);
+                        count++;
+                    }
+                }
+    
+                alternativesFrame.add(new JScrollPane(alternativesPanel));
+                alternativesFrame.setVisible(true);
             }
-
-
-        }
-
-        alternativesFrame.add(new JScrollPane(alternativesPanel));
-        alternativesFrame.setVisible(true);
+        });
+    
+        promptPanel.add(Box.createRigidArea(new Dimension(0, 20))); // Add some spacing
+        promptPanel.add(alternativeCarsButton);
+    
+        promptFrame.add(promptPanel);
+        promptFrame.setVisible(true);
     }
 
     public static void main(String[] args) {
