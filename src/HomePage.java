@@ -34,7 +34,9 @@ public class HomePage extends JFrame {
         returnCarButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                JOptionPane.showMessageDialog(null, "Return Car functionality coming soon!");
+                System.out.println("LINE 37");
+                CarReturnWindow window = new CarReturnWindow();
+                window.setVisible(true);
             }
         });
 
